@@ -39,7 +39,7 @@ Please output the above json format with new code that fixes the errors and an e
   });
 
   const res = chatCompletion.data.choices[0].message.content
-  console.log("gpt response", res)
+  // console.log("gpt response", res)
   return JSON.parse(res) 
 }
 

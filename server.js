@@ -20,9 +20,19 @@ router.get('/do_stuff', async (ctx, next) => {
     }
 });
 
+// New endpoint that always throws an error
+router.get('/multiply_by_two/:id', async (ctx, next) => {
+    const id = ctx.params.id
+    throw new Error("oh no I forgot to implement this endpoint, what shall I do?")
+});
+
 app
     .use(router.routes())
     .use(router.allowedMethods());
+
+app.on('error', (err, ctx) => {
+    console.error('Server error', err);
+});
 
 app.listen(3000, () => console.log('Server is running on port 3000'));
 

@@ -1,7 +1,12 @@
+const Koa = require('koa');
+const bodyParser = require('koa-bodyparser');
 const fs = require('fs')
 const Bluebird = require('bluebird')
 const fix_code = require('./fix_code'); // import fix_code.js
 const ServerController = require('./ServerController'); // import ServerController
+const wtf = require('./WTFBot.js')
+
+const incidents = {}
 
 class SREBot {
     constructor(serverPath) {
@@ -9,20 +14,20 @@ class SREBot {
         this.controller = new ServerController(this.serverPath);
     }
 
+    // async receive_event(){
+
+    // }
     async start() {
-        // console.log("WTFFFFFF")
-        // this.controller.startServer();
-        // const error = await this.controller.nextError()
-        // console.log("GOT ERROR", error.toString())
 
         while (true) {
 
             // Start the server
             this.controller.startServer();
-            console.log('Started');
+            console.log('SREBot: Started server');
 
             const error = await this.controller.nextError()
-            console.log("GOT ERROR", error.toString())
+            console.log("SREBot received error:", error.toString())
+            console.log("WTFBot:", wtf.get_random_phrase())
 
             // Wait 500ms so we don't shut down the server before the request completes.
             // lol :)
@@ -36,11 +41,11 @@ class SREBot {
             //
             const res = await fix_code(code_str, error)
             fs.writeFileSync(this.serverPath, res.new_code)
-            console.log("REASON FOR CHANGE:", res.explanation)
+            console.log("SREBot:", res.explanation)
 
             // Shutdown the server
             this.controller.shutdownServer();
-            console.log('Stopped');
+            console.log('SREBot: Stopped server');
 
             // Wait for 5 seconds before starting the server again
             // await new Promise(resolve => setTimeout(resolve, 5000));
